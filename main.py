@@ -90,12 +90,12 @@ async def on_raw_reaction_add(payload):
 
   nb = 0
   for r in message.reactions:
-    users = await r.users().flatten()
-    if member in users:
-      nb = nb + 1
-      if nb > 1:
-        await message.remove_reaction(payload.emoji, member)
-        return
+    async for u in r.users():
+      if u == member:
+        nb = nb + 1
+        if nb > 1:
+          await message.remove_reaction(payload.emoji, member)
+          return
 
 
   role = discord.utils.get(guild.roles, name = message.content)
@@ -130,9 +130,10 @@ async def on_raw_reaction_remove(payload):
   member = discord.utils.get(guild.members, id = payload.user_id)
   
   for r in message.reactions:
-    users = await (r.users()).flatten()
-    if member in users:
-      return
+    #users = r.users()
+    async for u in r.users():
+      if u == member:
+        return
 
   role = discord.utils.get(guild.roles, name = message.content)
   if role is not None:
