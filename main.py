@@ -130,13 +130,14 @@ async def on_raw_reaction_remove(payload):
   member = discord.utils.get(guild.members, id = payload.user_id)
   
   for r in message.reactions:
-    users = await r.users().flatten()
+    users = await (r.users()).flatten()
     if member in users:
       return
 
   role = discord.utils.get(guild.roles, name = message.content)
   if role is not None:
     await member.remove_roles(role, reason="User removed reaction")
+    print('role removed')
   else:
     print('role not found')
 
